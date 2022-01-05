@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProductPage from "../pages/ProductPage";
 import ShopProvider, { ShopContext } from "../context/shopContext";
 import Navbar from "./Navbar";
+import Cart from "./Cart";
 
 
 
@@ -21,13 +22,13 @@ function App() {
       <StyletronProvider value={engine} debug={debug} debugAfterHydration>
         <BrowserRouter>
           <Navbar/>
+          <Cart/>
           <Routes>
             <Route path="/" element={<HomePage />} />
           </Routes>
           <Routes>
-            <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/product/:handle" element={<ProductPage />} />
           </Routes>
-
         </BrowserRouter>
       </StyletronProvider>
     </ShopProvider>

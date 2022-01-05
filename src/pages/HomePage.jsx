@@ -14,7 +14,7 @@ const HomePage = () => {
         }
     }, [fetchAllProducts])
 
-    
+    console.log(products[0]);
     if (!products) {
         return <div>Loading</div>
     }
@@ -23,7 +23,7 @@ const HomePage = () => {
             <Row>
                 {products.map(product => (
                     <Col key={product.id} size="3">
-                        <Link to={`/product/${product.id}`}>
+                        <Link to={`/product/${product.handle}`}>
                             <Div p="2rem">
                                 <Div h="20rem"
                                     bgImg={product.images[0].src}

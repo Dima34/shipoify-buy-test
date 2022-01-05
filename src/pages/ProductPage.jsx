@@ -6,16 +6,16 @@ import { ShopContext } from '../context/shopContext';
 
 const ProductPage = () => {
 
-    let { id } = useParams();
+    let { handle } = useParams();
 
-    const {fetchProductWithId, addItemToCheckout, product} = useContext(ShopContext)
+    const {fetchProductWithHandle, addItemToCheckout, product} = useContext(ShopContext)
 
     useEffect(() => {
-        fetchProductWithId(id)
+        fetchProductWithHandle(handle)
         return () => {
 
         }
-    }, [fetchProductWithId, id])
+    }, [fetchProductWithHandle, handle])
 
     
 

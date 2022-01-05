@@ -19,12 +19,31 @@ export default class ShopProvider extends Component {
     }
 
     componentDidMount(){
-        this.createCheckout()
-        this.fetchAllProducts()
+        // this.createCheckout()
+        // this.fetchAllProducts()
+
+        // Check if local storage has a checout_id saved
+        if (localStorage.checkout_id) {
+            this.fetchCheckout(localStorage.checkout_id)
+        } else{
+            this.createCheckout()
+        }
+
+        // if we have no checkout_id in a localStorage than we will create a new checkout
+        
+
+        // else fetch the checkout from shopify
+    }
+
+    fetchCheckout = async(checkoutID)=>{
+        client.checkout.fetch(checkoutID).then((checkout) => {
+            this.setState({ checkout : checkout }) 
+        }).catch(err=>console.log(err))
     }
 
     createCheckout = async () => {
         const checkout = await client.checkout.create()
+        localStorage.setItem("checkout_id", checkout.id)
         this.setState({ checkout : checkout }) 
     }
 
@@ -41,15 +60,35 @@ export default class ShopProvider extends Component {
         );
         this.setState({ checkout: checkout });
     
-      };
+    };
+
+    removeItemFromCheckout = async (variantId)=>{
+        client.checkout.removeLineItems(this.state.checkout.id, variantId).then((checkout) => {
+            this.setState({ checkout: checkout });
+        });
+    }
+
+    updateItemCount = async (variantId, quantity)=>{
+        const lineItemsToUpdate = [
+            {id: variantId, quantity: quantity}
+        ];
+          
+        console.log(lineItemsToUpdate);
+
+        client.checkout.updateLineItems(this.state.checkout.id, lineItemsToUpdate).then((checkout) => {
+            this.setState({ checkout: checkout });
+        });
+
+    }
 
     fetchAllProducts = async () => {
         const products = await client.product.fetchAll()
         this.setState( { products : products } )
     }
 
-    fetchProductWithId = async (id) => {
-        const product = await client.product.fetch(id)
+    fetchProductWithHandle = async (handle) => {
+        this.setState({ product: {} })
+        const product = await client.product.fetchByHandle(handle)
         this.setState({ product: product })
     }
 
@@ -69,10 +108,12 @@ export default class ShopProvider extends Component {
                 value={{
                     ...this.state,
                     fetchAllProducts : this.fetchAllProducts,
-                    fetchProductWithId : this.fetchProductWithId,
                     closeCart: this.closeCart,
                     openCart: this.openCart,
-                    addItemToCheckout: this.addItemToCheckout
+                    addItemToCheckout: this.addItemToCheckout,
+                    removeItemFromCheckout: this.removeItemFromCheckout,
+                    updateItemCount : this.updateItemCount,
+                    fetchProductWithHandle : this.fetchProductWithHandle
                 }}
             >
                 {this.props.children}
